@@ -1,3 +1,4 @@
+// *TO-DO*
 // start slingin' some d3 here. X
 // draw enemies in svg X
 // make it so the e move random X
@@ -5,6 +6,7 @@
 // detect when enemies touches 
 // keep track of the users score
 // animate the enemies
+
 
 //svg canvas
 //var Player class
@@ -14,17 +16,20 @@
 //setIntervals for game loop
   //updating positions of players and enemies
 
+// global options //
+
 var gameOptions = {
   height: 450,
   width: 700,
-  radius: 30,
+  radius: 10,
   nEnemies: 30,
   padding: 20
 }
 
+// Player Constructor //
 
 var Player = function(id){
-  this.id = id;
+  this.id = 'p' + id;
   this.class = 'player'
   this.fill = "lightgreen";
   this.r = 10;
@@ -32,9 +37,7 @@ var Player = function(id){
 
 Player.prototype.checkCollisions = function(){
   var enemies = d3.selectAll('.enemies')
-  // get x and y using select('#id')
-  var node = d3.select('.player');
-
+  var node = d3.select('#' + this.id);
   var cx = node.attr("cx");
   var cy = node.attr("cy");
   var r = node.attr("r");
@@ -68,16 +71,7 @@ Player.prototype.checkCollisions = function(){
 }
 
 
-//declairing functions to enable dragging of player
-function dragmove(d) {
-  d3.select(this)
-      .attr("cx", d.x = Math.max(gameOptions.radius, Math.min(gameOptions.width - gameOptions.radius, d3.event.x)))
-      .attr("cy", d.y = Math.max(gameOptions.radius, Math.min(gameOptions.height - gameOptions.radius, d3.event.y)));
-}
-
-var drag = d3.behavior.drag()
-    .on("drag", dragmove);
-
+// Enemy Constructor //
 
 var Enemy = function() {
   this.x = Math.random() * gameOptions.width;
@@ -92,14 +86,15 @@ Enemy.prototype.updatePosition = function() {
   this.y = this.y //+ //random direction
 }
 
-
 var Scoreboard = {
   currentScore: 0,
   highScore:0
 }
 
 
-//helper function
+
+// helper functions //
+
 var makeEntities = function(entity, n) {
   entities = []
   for(var i=0; i<n; i++){
@@ -110,6 +105,22 @@ var makeEntities = function(entity, n) {
 }
 
 
+  // enables dragging of player //
+function dragmove(d) {
+  //selects the node
+  d3.select(this)
+      //sets its cx / cy to cursor position or edge of canvas
+      .attr("cx", d.x = Math.max(gameOptions.radius, Math.min(gameOptions.width - gameOptions.radius, d3.event.x)))
+      .attr("cy", d.y = Math.max(gameOptions.radius, Math.min(gameOptions.height - gameOptions.radius, d3.event.y)));
+}
+
+//event handler for dragging
+var drag = d3.behavior.drag()
+    .on("drag", dragmove);
+
+
+// build the game //
+
 
 //create the gameboard
 var gameBoard = d3.selectAll('body')
@@ -118,8 +129,6 @@ var gameBoard = d3.selectAll('body')
     .attr('height', gameOptions.height)
     .append("g")
     .selectAll('g');
-
-
 
 //Make the enemies
 var enemies = makeEntities(Enemy, 20);
@@ -135,9 +144,8 @@ gameBoard
   .attr('fill', function(d){return d.fill})
   .attr('r', function(d){return d.r});
 
-
 //Make the Player
-var player = [new Player(1)]
+var player = makeEntities(Player, 1)
 
 //Append the Player
 gameBoard
@@ -152,7 +160,6 @@ gameBoard
   .attr('r', function(d) { return d.r })
   .call(drag);
 
-
 //Breathing life into our enemies
 setInterval(function(){
   d3.selectAll('.enemies')
@@ -161,11 +168,11 @@ setInterval(function(){
       return { x: Math.random()*gameOptions.width,
                y: Math.random()*gameOptions.height
              }
-      })).transition().duration(850)
+      })).transition().duration(1000)
     .attr('cx', function(d) {return d.x})
     .attr('cy', function(d) {return d.y}) 
 
-}, 1000)
+}, 500)
 
 //check player position for overlap
 setInterval(function(){ player[0].checkCollisions() }, 100);
