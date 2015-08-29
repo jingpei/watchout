@@ -6,9 +6,9 @@ var currentTime;
 currentTime = function() {
   var currentTime, hour, minute, second, now;
   currentTime = new Date();
-  seconds = currentTime.getSeconds();
-  minutes = currentTime.getMinutes();
-  hour = currentTime.getHours() + minutes / 60
+  seconds = currentTime.getSeconds() + currentTime.getMilliseconds()/1000;
+  minutes = currentTime.getMinutes() + seconds/ 60;
+  hour = currentTime.getHours() + minutes / 60;
 
   return data = [
   { unit: 'seconds',
@@ -29,10 +29,9 @@ offSetX = 150;
 offSetY = 100;
 
 pi = Math.PI;
-scaleSecs = d3.scale.linear().domain([0, 59 + 999/1000]).range([0, 2 * pi]);
+scaleSecs = d3.scale.linear().domain([0,60]).range([0, 2 * pi]);
 scaleMins = d3.scale.linear().domain([0, 59 + 59/60]).range([0, 2 * pi]);
 scaleHours = d3.scale.linear().domain([0, 11 + 59/60]).range([0, 2 * pi]);
-
 
 
 
@@ -46,13 +45,40 @@ vis = d3.selectAll(".chart")
 
 
   clockGroup.append("svg:circle")
-  .attr("r", 70).attr("fill", "none")
-  .attr("class", "clock outercircle")
+    .attr("r", 70)
+    .attr("class", "clock outercircle")
+  
+  var secondBack = d3.svg.arc()
+      .innerRadius(60)
+      .outerRadius(70)
+      .startAngle(0)
+      .endAngle(2 *pi);
+      
+  var minuteBack = d3.svg.arc()
+      .innerRadius(50)
+      .outerRadius(60)
+      .startAngle(0)
+      .endAngle(2 *pi);
 
-  // clockGroup.append("svg:circle")
-  // .attr("r", 4)
-  // .attr("fill", "black")
-  // .attr("class", "clock innercircle");
+  var hourBack = d3.svg.arc()
+      .innerRadius(40)
+      .outerRadius(50)
+      .startAngle(0)
+      .endAngle(2 *pi);
+
+
+
+  clockGroup.append('svg:path')
+    .attr('d', secondBack)
+    .attr('class', 'clock secondback');
+
+  clockGroup.append('svg:path')
+    .attr('d', minuteBack)
+    .attr('class', 'clock minuteback');
+  
+  clockGroup.append('svg:path')
+    .attr('d', hourBack)
+    .attr('class', 'clock hourback');
 
 
 
@@ -122,14 +148,17 @@ vis = d3.selectAll(".chart")
   }
 
 
-  setInterval(function() {
+//   setInterval(function() {
+//   var data;
+//   data = currentTime();
+//   return render(data);
+// }, 1);
+
+
+// static clock for styling
   var data;
   data = currentTime();
-  return render(data);
-}, 1000);
-
-
-
+  render(data)
 
 
 

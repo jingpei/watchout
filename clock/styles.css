@@ -11,5 +11,18 @@
 }
 
 .outercircle{
-  fill: #A4C99D;
+  fill: none;
 }
+
+.secondback{
+  fill: #FFFFFF
+}
+
+.minuteback{
+  fill: #F6F6F6
+}
+
+.hourback {
+  fill: #D4D4D4;
+}
+
