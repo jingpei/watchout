@@ -1,8 +1,8 @@
-// start slingin' some d3 here.
-// draw enemies in svg
-// make it so the e move random
-// make a player
-// detect when enemies touches
+// start slingin' some d3 here. X
+// draw enemies in svg X
+// make it so the e move random X
+// make a player X
+// detect when enemies touches 
 // keep track of the users score
 // animate the enemies
 
@@ -23,22 +23,51 @@ var gameOptions = {
 }
 
 
-var Player = function(){
-  this.x = function(){ return d3.select('.player').attr('cx'); };
-  this.y = function(){ return d3.select('.player').attr('cy'); }
+var Player = function(id){
+  this.id = id;
   this.class = 'player'
-  this.fill = "#000";
+  this.fill = "lightgreen";
   this.r = 10;
 }
 
 Player.prototype.checkCollisions = function(){
-  // enemies with positions in an array
+  var enemies = d3.selectAll('.enemies')
+  // get x and y using select('#id')
+  var node = d3.select('.player');
+
+  var cx = node.attr("cx");
+  var cy = node.attr("cy");
+  var r = node.attr("r");
+
+  var overlap = function(entity){
+    var zone = {}
+      zone.top  = entity.attr("cy") + (0.5 * entity.attr('r'));
+      zone.bottom  = entity.attr("cy") - (0.5 * entity.attr('r'));
+      zone.right = entity.attr("cx") + (0.5 * entity.attr('r'));
+      zone.left = entity.attr("cx") - (0.5 * entity.attr('r'));
+    
+    return zone;
+  }
+
+  var dangerZone = {
+    top: cx - (0.5 * r),
+    bottom: cx + (0.5 * r),
+    left: cy - (0.5 * r),
+    right: cy + (0.5 * r)
+  }
 
   //loop and check at that time if the x and y's have overlap
+  for(var i = 0; i < enemies.length; i++){
+    //check enemies cx, cy, r
+    zone = overlap(enemies[i]);
+
+  }
 
   // if collision update scoreboard
 
 }
+
+
 //declairing functions to enable dragging of player
 function dragmove(d) {
   d3.select(this)
@@ -54,7 +83,7 @@ var Enemy = function() {
   this.x = Math.random() * gameOptions.width;
   this.y = Math.random() * gameOptions.height;
   this.class = 'enemy'
-  this.fill = 'pink'
+  this.fill = 'lightblue'
   this.r = 10;
 }
 
@@ -84,11 +113,11 @@ var makeEntities = function(entity, n) {
 
 //create the gameboard
 var gameBoard = d3.selectAll('body')
-                .append('svg')
-                .attr('width', gameOptions.width)
-                .attr('height', gameOptions.height)
-                .append("g")
-                .selectAll('g');
+    .append('svg')
+    .attr('width', gameOptions.width)
+    .attr('height', gameOptions.height)
+    .append("g")
+    .selectAll('g');
 
 
 
@@ -103,24 +132,25 @@ gameBoard
   .attr('class', 'enemies')
   .attr('cx', function(d){return d.x})
   .attr('cy', function(d){return d.y})
-  .attr('fill', 'pink')
+  .attr('fill', function(d){return d.fill})
   .attr('r', function(d){return d.r});
 
 
 //Make the Player
-var player = [new Player()]
+var player = [new Player(1)]
 
 //Append the Player
 gameBoard
-    .data(player)
-    .enter()
-    .append('svg:circle')
-    .attr('class', 'player')
-    .attr('cx', 200)
-    .attr('cy', 200)
-    .attr('fill', function(d) { return d.fill })
-    .attr('r', function(d) { return d.r })
-    .call(drag);
+  .data(player)
+  .enter()
+  .append('svg:circle')
+  .attr('class', 'player')
+  .attr('id',function(d) { return d.id })
+  .attr('cx', 200)
+  .attr('cy', 200)
+  .attr('fill', function(d) { return d.fill })
+  .attr('r', function(d) { return d.r })
+  .call(drag);
 
 
 //Breathing life into our enemies
@@ -131,16 +161,23 @@ setInterval(function(){
       return { x: Math.random()*gameOptions.width,
                y: Math.random()*gameOptions.height
              }
-      }))
+      })).transition().duration(850)
     .attr('cx', function(d) {return d.x})
     .attr('cy', function(d) {return d.y}) 
-}, 500)
+
+}, 1000)
+
+//check player position for overlap
+setInterval(function(){ player[0].checkCollisions() }, 100);
 
 
 
 
 
 
+
+
+ 
 
 
 
