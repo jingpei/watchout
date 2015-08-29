@@ -36,44 +36,41 @@ var Player = function(id){
 }
 
 Player.prototype.checkCollisions = function(){
-  var enemies = d3.selectAll('.enemies')
+  // compare position of this player to positions of all enemies
+  // from http://tinyurl.com/nl7vyxu
   var node = d3.select('#' + this.id);
-  var cx = node.attr("cx");
-  var cy = node.attr("cy");
-  var r = node.attr("r");
+  var cx = Number(node.attr("cx"));
+  var cy = Number(node.attr("cy"));
+  var r = Number(node.attr("r"));
+  var target;
+  var tcx;
+  var tcy;
+  var tr;
+  var xd;
+  var yd;
+  var wt;
 
-  var overlap = function(entity){
-    var zone = {}
-      zone.top  = entity.attr("cy") + (0.5 * entity.attr('r'));
-      zone.bottom  = entity.attr("cy") - (0.5 * entity.attr('r'));
-      zone.right = entity.attr("cx") + (0.5 * entity.attr('r'));
-      zone.left = entity.attr("cx") - (0.5 * entity.attr('r'));
+
+  for(var i = 0; i<enemies.length; i++){
+   target = d3.select('#e' + i)
+   tcx = Number(target.attr("cx"));
+   tcy = Number(target.attr("cy"));
+   tr = Number(target.attr("r"));
+   
+   xd = cx - tcx;
+   yd = cy - tcy;
+   wt = r + tr;  
     
-    return zone;
+    if(xd * xd + yd * yd <= wt * wt){
+      return true;
+    }
   }
-
-  var dangerZone = {
-    top: cx - (0.5 * r),
-    bottom: cx + (0.5 * r),
-    left: cy - (0.5 * r),
-    right: cy + (0.5 * r)
-  }
-
-  //loop and check at that time if the x and y's have overlap
-  for(var i = 0; i < enemies.length; i++){
-    //check enemies cx, cy, r
-    zone = overlap(enemies[i]);
-
-  }
-
-  // if collision update scoreboard
-
-}
-
+};
 
 // Enemy Constructor //
 
-var Enemy = function() {
+var Enemy = function(id) {
+  this.id = 'e' + id;
   this.x = Math.random() * gameOptions.width;
   this.y = Math.random() * gameOptions.height;
   this.class = 'enemy'
@@ -98,7 +95,7 @@ var Scoreboard = {
 var makeEntities = function(entity, n) {
   entities = []
   for(var i=0; i<n; i++){
-    var e = new entity();
+    var e = new entity(i);
     entities.push(e);
   }
   return entities;
@@ -131,7 +128,7 @@ var gameBoard = d3.selectAll('body')
     .selectAll('g');
 
 //Make the enemies
-var enemies = makeEntities(Enemy, 20);
+var enemies = makeEntities(Enemy, 500);
 
 //Append the enemies
 gameBoard
@@ -139,6 +136,7 @@ gameBoard
   .enter()
   .append('circle')
   .attr('class', 'enemies')
+  .attr('id',function(d) { return d.id })
   .attr('cx', function(d){return d.x})
   .attr('cy', function(d){return d.y})
   .attr('fill', function(d){return d.fill})
@@ -168,14 +166,30 @@ setInterval(function(){
       return { x: Math.random()*gameOptions.width,
                y: Math.random()*gameOptions.height
              }
-      })).transition().duration(1000)
+      })).transition().duration(1500)
     .attr('cx', function(d) {return d.x})
     .attr('cy', function(d) {return d.y}) 
 
-}, 500)
+}, 1000)
+// player[0].checkCollisions()
+setInterval(function(){ 
+  if(player[0].checkCollisions()){
+    var highScore =  Number(d3.selectAll('.high').select('span').text());
+    var collisionsValue = Number(d3.selectAll('.collisions').select('span').text())+1;
+    var currentScore = Number(d3.selectAll('.current').select('span').text())
+    Number(d3.selectAll('.high').select('span').text(Math.max(highScore,currentScore)))
+    d3.selectAll('.collisions').select('span').text(collisionsValue + '')
+    d3.selectAll('.current').select('span').text(0 + '')
+} 
 
-//check player position for overlap
-setInterval(function(){ player[0].checkCollisions() }, 100);
+  }, 100);
+
+//update score
+setInterval(function(){
+    collisionsValue = Number(d3.selectAll('.current').select('span').text())+1;
+    d3.selectAll('.current').select('span').text(collisionsValue + '')
+}, 100)
+
 
 
 

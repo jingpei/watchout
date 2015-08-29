@@ -21,6 +21,7 @@
   // Player Attribs
     // Follows Mouse -- when mouse is click-down
     // Set Size
+    // stays on page
 
   // Enemies Attribs
     // move simaltainiously
