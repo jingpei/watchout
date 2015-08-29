@@ -5,7 +5,7 @@
 
 var gameOptions = {
   height: 450,
-  width: 700,
+  width: 750,
   radius: 10,
   nEnemies: 30,
   padding: 20
@@ -120,7 +120,7 @@ gameBoard
   .attr('id',function(d) { return d.id })
   .attr('cx', function(d){return d.x})
   .attr('cy', function(d){return d.y})
-  .attr('fill', function(d){return d.fill})
+  //.attr('fill', function(d){return d.fill})
   .attr('r', function(d){return d.r});
 
 //Make the Player

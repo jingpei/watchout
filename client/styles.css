@@ -1,3 +1,45 @@
-.enemies > img {
-  background-image: url(../nose.png)
+
+@import url(https://fonts.googleapis.com/css?family=Ubuntu);
+
+
+.high, .current, .collisions{
+  display: inline-block;
+  vertical-align: text-top;
+  min-width: 250px;
+  font-family: 'Ubuntu', sans-serif;
+  color: grey;
+}
+
+span {
+  display: inline;
+  font-family: 'Ubuntu', sans-serif;
+  font-size: 100px;
+  color: black;
+}
+
+g {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.enemies{
+  /* -webkit-animation: Pulse 1s infinite;
+  animation: Pulse 1s infinite; */
+  fill: none;
+  stroke: pink;
+  stroke-width: 1;
+  -webkit-animation: Pulse .5s infinite;
+}
+
+@keyframes Pulse{
+  0% {stroke-width: 1;}
+  50% {stroke-width: 5;}
+  100% {stroke-width: 1;}
+}
+
+@-webkit-keyframes Pulse{
+  0% {stroke-width: 1;}
+  50% {stroke-width: 5;}
+  100% {stroke-width: 1;}
 }
