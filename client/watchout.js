@@ -1,20 +1,5 @@
 // *TO-DO*
-// start slingin' some d3 here. X
-// draw enemies in svg X
-// make it so the e move random X
-// make a player X
-// detect when enemies touches 
-// keep track of the users score
 // animate the enemies
-
-
-//svg canvas
-//var Player class
-  //collision detections
-//var Enemies class 
-//scoreboard update
-//setIntervals for game loop
-  //updating positions of players and enemies
 
 // global options //
 
@@ -27,7 +12,6 @@ var gameOptions = {
 }
 
 // Player Constructor //
-
 var Player = function(id){
   this.id = 'p' + id;
   this.class = 'player'
@@ -88,8 +72,6 @@ var Scoreboard = {
   highScore:0
 }
 
-
-
 // helper functions //
 
 var makeEntities = function(entity, n) {
@@ -118,7 +100,6 @@ var drag = d3.behavior.drag()
 
 // build the game //
 
-
 //create the gameboard
 var gameBoard = d3.selectAll('body')
     .append('svg')
@@ -128,7 +109,7 @@ var gameBoard = d3.selectAll('body')
     .selectAll('g');
 
 //Make the enemies
-var enemies = makeEntities(Enemy, 500);
+var enemies = makeEntities(Enemy, 20);
 
 //Append the enemies
 gameBoard
@@ -171,25 +152,26 @@ setInterval(function(){
     .attr('cy', function(d) {return d.y}) 
 
 }, 1000)
-// player[0].checkCollisions()
+
+var stats = {
+  collisions: 0,
+  currentScore : 0,
+  highScore : 0 
+};
+
+
 setInterval(function(){ 
+    stats.currentScore++;
+    d3.selectAll('.current').select('span').text(stats.currentScore + '')
   if(player[0].checkCollisions()){
-    var highScore =  Number(d3.selectAll('.high').select('span').text());
-    var collisionsValue = Number(d3.selectAll('.collisions').select('span').text())+1;
-    var currentScore = Number(d3.selectAll('.current').select('span').text())
-    Number(d3.selectAll('.high').select('span').text(Math.max(highScore,currentScore)))
-    d3.selectAll('.collisions').select('span').text(collisionsValue + '')
-    d3.selectAll('.current').select('span').text(0 + '')
-} 
-
+    stats.collisions++;
+    stats.highScore = Math.max(stats.highScore,stats.currentScore);
+    stats.currentScore = 0;
+    d3.selectAll('.high').select('span').text(stats.highScore + '')
+    d3.selectAll('.collisions').select('span').text(stats.collisions + '')
+    d3.selectAll('.current').select('span').text(stats.currentScore + '')
+  } 
   }, 100);
-
-//update score
-setInterval(function(){
-    collisionsValue = Number(d3.selectAll('.current').select('span').text())+1;
-    d3.selectAll('.current').select('span').text(collisionsValue + '')
-}, 100)
-
 
 
 
